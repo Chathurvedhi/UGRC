@@ -1,4 +1,10 @@
-public class Example_2 {
+/*
+
+Class Variable Example Base
+
+ */
+
+public class Example_Class_Var {
     private static Object classObject; // Class variable
 
     public static void main(String[] args) {
