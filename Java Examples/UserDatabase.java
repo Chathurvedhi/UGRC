@@ -5,8 +5,7 @@ The class object (user data) is assigned in the createUser function and used for
 The class object remains alive with respect to the garbage collector until the end of the program's execution, despite its last meaningful usage occurring earlier in the sequence.
  */
 
-
-class UserData {
+class UserData {                        // Class definition
     private String username;
     private String email;
 
@@ -39,19 +38,18 @@ public class UserDatabase {
         System.out.println("Creating and editing user");
         UserData user = createUser(username, email);
         editUserEmail(user);
-        System.out.println("User creation and editing completed");
     }
 
     public static UserData createUser(String username, String email) {
         System.out.println("Creating user data");
         classObject = new UserData(username, email); // Assigning the class variable
-        System.out.println("User data created");
         return classObject;
     }
 
     public static void editUserEmail(UserData user) {
         System.out.println("Editing user's email");
-        user.setEmail("edited@example.com");
-        System.out.println("User email edited");
+        user.setEmail("edited@example.com");    // Last usage point of the object
+
+        // Possibly add 'user = null;' making it eligible for GC to collect 
     }
 }
