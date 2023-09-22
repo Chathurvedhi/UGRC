@@ -37,7 +37,7 @@
 
 * Installed and working with soot but with a few issues, will resolve them or try Sootup(Soot successor).
 
-## 4 Sep 2023
+## 5 Sep 2023
 
 * Most papers have improved on Escape Analysis, Stack Allocation, and Garbage Collection, but not on Liveness Analysis.
 
@@ -80,3 +80,36 @@
 
 * Soot Compiler
 
+## 19 Sep 2023
+
+* Most work primarily surrounding Region based analysis by Tofte, Birkedal, Talpin
+
+* Built on Functional Language ML
+* Well typed expression transformed to region based
+    * TE < e -> e', (T, p), phi; phi - supersets of all regions required for eval of e
+
+* Functions modified to take run time parameters containing information based on regions.
+
+* Problems
+    * Polymorphic Recursion
+    * Poor Results for nested and recursive
+    * Storage mode allocation
+
+* Bounding regions by analysis
+    * Upper bound of # of values in a given region
+    * Finite -> Activation Record
+    * Infinite -> Linked List of fixed size region pages
+
+* Stats
+    * 10x to 0.25x in speed
+    * 0.08x to 3000x in storage
+    * If modified to be region friendly, much better performance
+
+* Introduced Region Profiling for data leaks and modules for large pieces of code
+
+* Garbage collection
+    * Customized Cheney's Algo 
+    * Applied to each region page which are connected to each other
+    * All pages connected in region manner will get copied to to-space when 2/3 of the space of the free list is completed.
+    * GC + region interface is worse than just RI
+    * But it is better than GC individually(without RI).
