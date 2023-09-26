@@ -113,3 +113,40 @@
     * All pages connected in region manner will get copied to to-space when 2/3 of the space of the free list is completed.
     * GC + region interface is worse than just RI
     * But it is better than GC individually(without RI).
+
+## 26th Sep 2023
+
+* Went over the Cornell paper[link](https://dl.acm.org/doi/10.1145/1029873.1029884)
+
+* The summary of the paper: 
+    * Region based analysis based on points-to analysis.
+    * Stack allocation on non-escaping objects.
+
+* Stats
+    * The static analysis takes up 16% of total compilation time(including soot and i/o of files).
+    * Wrt memory management, the analysis is slightly worse than a dynamic GC on average. 
+    * For applications which use significantly less memory, RA is significantly better than GC as GC is set to be called at higher memory intervals.
+    * For short lived memory regions RA > GC
+    * For long lived memory regions GC > RA
+    * For most programs RA < GC by small factor.
+
+* The analysis is divided into 3 parts: Points-to Analysis, Region Liveness Analysis and Region Translation.
+* Points-to Analysis modified in format of Region based analysis creates segments the program into regions using flow-insensitve, context-sensitive analysis.
+* Region Liveness Analysis is a flow-sensitive, inter-procedural analysis to determine the region of each object at each program point.
+* Region Translation is a translation of the program to include region annotations for the final piece of code
+
+* Stack allocation is also included similar to previous work on escape analysis, but with a few changes.
+* There is a system of bounded allocations where between the creation and deletion of a region, if there is a bounded limit of memory which can be allocated, then the memory is allocated on the stack.
+
+* Significant portion of inter region analysis is similar to implementations by Talpin, Birkedal, Tofte.
+
+## 3rd Oct 2023
+
+### Work to be done
+
+* Presentation of paper of Cornell - Thursday, Friday, Saturday, Sunday
+* Reading of these papers: 
+    * [Cornell](https://dl.acm.org/doi/10.1145/1029873.1029884) - Extensive Reading
+    * [Free-Me](https://dl.acm.org/doi/10.1145/1133255.1134024) - Wednesday
+    * [Conditional correlation analysis for safe region-based memory management](https://dl.acm.org/doi/10.1145/1375581.1375588) - Thursday
+    * [Safe and efficient hybrid memory management for Java](https://dl.acm.org/doi/10.1145/2754169.2754185) - Friday
