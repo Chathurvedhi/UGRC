@@ -147,6 +147,109 @@
 * Presentation of paper of Cornell - Thursday, Friday, Saturday, Sunday
 * Reading of these papers: 
     * [Cornell](https://dl.acm.org/doi/10.1145/1029873.1029884) - Extensive Reading
-    * [Free-Me](https://dl.acm.org/doi/10.1145/1133255.1134024) - Wednesday
-    * [Conditional correlation analysis for safe region-based memory management](https://dl.acm.org/doi/10.1145/1375581.1375588) - Thursday
-    * [Safe and efficient hybrid memory management for Java](https://dl.acm.org/doi/10.1145/2754169.2754185) - Friday
+    * [Free-Me](https://dl.acm.org/doi/10.1145/1133255.1134024) 
+    * [Conditional correlation analysis for safe region-based memory management](https://dl.acm.org/doi/10.1145/1375581.1375588) 
+    * [Safe and efficient hybrid memory management for Java](https://dl.acm.org/doi/10.1145/2754169.2754185) 
+ 
+## 10th Oct 2023
+
+* Presentation of Cornell paper is mostly done, need to iron out some inconsistencies discussed during it and finish up with Cornell paper.
+* Reading of Free-Me paper in completion - 8th Oct
+* Creating Presentation - 9th Oct
+* Presentation of Free-Me paper - 10th Oct
+
+## 21th October 2023
+
+* Spent most of the week doing a final run for paper search related to compile-time deallocation of memory.
+* Looked at all ref/cited of any related paper along with work done by profs frequenting this field.
+* Found other papers with similar methods as we discussed before using a flow-insensitive + flow,context-sensitive approach.
+    * Most of them have the same conclusion with not as efficient as GC and only good for short-lived objects.
+    * Points-to Analysis based papers have low performance wrt GC and aren't sufficient for compile time evaluation(Conclusion in one of the papers)
+
+* Found a few papers which may have some relevance on heap memory management and analysis techniques which could be used to build something similar with more efficiency:
+    * [IITB Heap Reference](https://dl.acm.org/doi/pdf/10.1145/1290520.1290521)
+    * [Madrid Spain Heap Reference](https://dl.acm.org/doi/pdf/10.1145/1296907.1296922)
+    * [Flow Control UTAustin](http://z.cs.utexas.edu/users/osa/laminar/pubs/pldi161-roy.pdf)
+    * [Data-Structure Information](https://dl.acm.org/doi/pdf/10.1145/2754169.2754176)
+
+* The only relevant papers with different approach and results are:
+    * [Compile-Time Deallocation of Individual Objects](https://dl.acm.org/doi/pdf/10.1145/1133956.1133975)
+    * [Uniqueness Inference for Compile-Time Object Deallocation](https://dl.acm.org/doi/pdf/10.1145/1296907.1296923)
+
+* Both of the papers papers are by Sigmund Cherem and Radu Rugina: The same duo for Region Based Analysis paper I presented.
+
+### Compile-Time Deallocation of Individual Objects
+
+* Individual object recollection using free() statements for objects
+* Tracks the state of one object at a time form allocation site till the last use of the object and it is no longer reachable.
+* Built on the [Shape Analysis](https://dl.acm.org/doi/abs/10.1145/1047659.1040331)
+* Went over the algorithm to a basic understanding.
+
+### Base algorithm details
+
+* It tracks each heap cell from a region of memory(from stack or heap) and keeps a reference count(k) of the given cell.
+* Also another parameter t for each object which how far does each object gets tracked till it is not dealt with and is left to the GC.
+    * This means this method does not deal with long-lived objects as they are too expensive to track.
+* Another parameter for holding count
+    * r = 0 -> Set of variables to refer to the object
+    * r = 1 -> Set of variables and its fields refer to the object
+
+### Results 
+
+* The parameters k, t, r are set to 1, 30, 0 for most efficient results.
+    * k = 1, means only objects which are referred once are tracked and are freed.
+    * t = 30, means long-lived objects are not dealt with and left to the GC.
+
+* Analysis for this basic parameter set take very long upto 70% of total compilation time.
+
+* Integrated with GC shows improvement of 7-8% less memory allocated at given time. Upto 26% for small heaps
+* Small run-time overhead but large compile-time overhead.
+
+* Doesn't deal with long lived objects like prev iterations.
+
+### Uniqueness Inference for Compile-Time Object Deallocation
+
+* In the middle of reading this paper. Will update further.
+* Haven't finished the algorithm yet. It is more complex than the previous paper.
+
+* Does an analysis of uniqueness of an object at any given point in the program.
+* If the unique refernce is overwritten or the variable dies, the object is freed.
+* Better results on Heap size during runtime with much less analysis time during compilation.
+* Will have to go over the algorithm in detail to see how it deals with long-lived objects and collection classes.
+
+
+
+## 31 Oct 2023
+
+* Compile-Time Deallocation of Individual Objects
+    * Thought of manipulating the necessary bounds to get better results
+    * But program is based on reference counts of each object.
+    * Not related
+    
+* Uniqueness Inference for Compile-Time Object Deallocation
+    * Based on the similar principle of reference count of the object.
+    * Only deals with checking if an object has only one reference and has object deletion methods in place when the unique reference is overwritten
+    * Primary outcome of the above: Recursive deallocation of objects efficiently when parent node is overwritten causing entire heap structure to be efficiently removed.
+
+* Any papers cited by of relevance go toward memory leaks and resource leaks.
+
+* Went over the previous papers read dealing with an algorithm with a flow-insensitive and flow,context-sensitive approach.
+    * Most of them have the same conclusion with not as efficient as GC and only good for short-lived objects.
+    * Points-to Analysis based papers have low performance wrt GC and aren't sufficient for compile time evaluation(Conclusion in one of the papers)
+
+* Looking for papers on dealing with memory leaks
+    * Most memory leak based on unused references are dealt with on runtime analysis tools.
+    * [CLOSER](https://dl.acm.org/doi/abs/10.1145/1375634.1375636) - Resource management tool
+    * [SAVER](https://dl.acm.org/doi/pdf/10.1145/3377811.3380323) - Primarily double free and use after free; for unused references, intraprocedural
+    * [MemFix](https://dl.acm.org/doi/pdf/10.1145/3236024.3236079) - Deals primarily with double frees in C
+
+* Most algorithms with points-to + liveness analysis deal with short-lived objects and are not efficient for long-lived objects.
+* To make an algorithm for long-lived objects, we need to have a sense of the lifetime of the object.
+
+* say for the case obj is a long lived object, and obj.f = obj2. If obj2 is a short lived reference and obj.f is never used we can do to things.
+    * Delinking: obj.f = null at the last use of obj.f
+    * obj = null at last use of the object itself
+
+* For delinking obj.f we need to see all the use points of obj.f throughout the program.
+* Track the class methods which utilize obj.f and track the use of either the methods or obj.f itself in code blocks.
+* To add unlinking for the object, we need interprocedural liveness analysis, the prime factor missing in the above papers.
