@@ -253,3 +253,30 @@
 * For delinking obj.f we need to see all the use points of obj.f throughout the program.
 * Track the class methods which utilize obj.f and track the use of either the methods or obj.f itself in code blocks.
 * To add unlinking for the object, we need interprocedural liveness analysis, the prime factor missing in the above papers.
+
+## Algorithm Ideas
+
+### Algo 1 - Dealing with the object in its scope or higher only
+
+* For Context insensitive summary of function to find out use/def, we must always take the conservative case where all parameters, return value and this is live at the end of the method which can't find the last use of the object.
+* Rather we can map liveness of the objects just after the call to the caller function and do a context sensitive analysis.
+* Either we deal with unallocating the object's field at the scope of allocation of the object or higher.
+
+### Algo 2 - Extending Region based analysis interprocedural liveness analysis
+
+* Assumes P = {param, ret, this} is live to start off with and taking all possible method calls it the program, conservatively remove the objects which are not live a end of every method.
+
+### Algo 3
+
+* Or we modify each method call saying it will be the last time the object will be called.
+* Something similar to a check variable which if true will free the given field.
+* Here a context insensitive analysis could identify spots where a given field could be freed and modify the code accordingly.
+* We can employ a context insensitive analysis to find out if any field of parameter objects are used in the method and their last points of use in the method.
+* If we take P = {param, ret, this}. We check for uses of v $\in$ P or v.f $\in$ P used in the method and determine their last use points by liveness analysis.
+* We add check parameters for all these cases even into nested function calls - Not sure how yet
+
+### To be done
+
+* Need to learn with how to deal with liveness information including heap objects and var references.
+* Once liveness information for var, references is understood, we can build use/def for each method.
+* After that, similar liveness analysis for each method can determine last use points for var, references.
