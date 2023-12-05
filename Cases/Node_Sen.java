@@ -51,11 +51,13 @@ public class Node_Sen {
                 
         // Var Set: {list}; Ref Set: {O1, O3, O3_data}
         
-        Node currNode = list.head3;             // Stack = {(list, O1), (currNode, O3)}; Heap = {(O1, head1, O2), (O1, head3, O3), (O1, head2, O4)}       
+        Node currNode = list.head3;             // Stack = {(list, O1), (currNode, O3)}; Heap = {(O1, head1, O2), (O1, head3, O3), (O1, head2, O4)}  
+        // ---------- O1 dies here !!!     
         
         // Var Set: {currNode}; Ref Set: {O3, O3_data}
 
         System.out.println(currNode.data);      // Stack = {(list, O1), (currNode, O3)}; Heap = {(O1, head1, O2), (O1, head3, O3), (O1, head2, O4)}
+        // ---------- O3 dies here !!!
         
         // Var Set: {}; Ref Set: {}
     }
@@ -130,7 +132,7 @@ We create mapping for the formal and actual parameters only for variables not re
         // Var Set: {ll, currNode}; Ref Set: {O1, O3, O3_data, O2, O2_data}
         
         System.out.println(currNode.data);  // Stack = {(ll, O1), (currNode, O2)}; Heap = {(O1, head1, O2), (O1, head3, O3)}    
-        // O2 dies here !!!
+        // ---------- O2 dies here !!!
 
         // Var Set: {ll}; Ref Set: {O1, O3, O3_data}
     }
@@ -150,6 +152,7 @@ We create mapping for the formal and actual parameters only for variables not re
         // Var Set: {ll, currNode}; Ref Set: {O1, O3, O3_data, O4, O4_data}
 
         System.out.println(currNode.data);  // Stack = {(ll, O1), (currNode, O4)}; Heap = {(O1, head1, O2), (O1, head3, O3), (O1, head2, O4)}    
+        // ---------- O4 dies here !!!
     
         Var Set: {ll}; Ref Set: {O1, O3, O3_data}
     }
